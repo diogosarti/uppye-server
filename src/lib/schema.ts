@@ -1,3 +1,4 @@
+import "dotenv/config";
 import {
   pgTable,
   text,
@@ -16,7 +17,7 @@ export const users = pgTable("users", {
     .$defaultFn(() => createId()),
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull().unique(),
-  passwordHash: text("password"),
+  passwordHash: text("password_hash"),
   avatarUrl: text("avatar_url"),
   role: varchar("role", { length: 50 }).notNull().default("student"), // admin | institution_user  | teacher | student
   createdAt: timestamp("created_at", { withTimezone: true })
