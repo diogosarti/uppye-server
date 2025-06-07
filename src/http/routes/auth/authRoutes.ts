@@ -16,14 +16,21 @@ export async function authRoutes(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post("/auth/login", {
     schema: {
       tags: ["Auth"],
+      summary: "Realiza login com email e senha",
+      description:
+        "Retorna accessToken e refreshToken caso as credenciais estejam corretas.",
       body: z.object({
-        email: z.string().email(),
-        password: z.string().min(6),
+        email: z.string().email().describe("E-mail do usuário"),
+        password: z.string().min(6).describe("Senha (mínimo 6 caracteres)"),
       }),
       response: {
         200: z.object({
-          accessToken: z.string(),
-          refreshToken: z.string(),
+          accessToken: z.string().describe("JWT de acesso"),
+          refreshToken: z.string().describe("JWT de atualização"),
+        }),
+        401: z.object({
+          statusCode: z.literal(401),
+          message: z.string(),
         }),
       },
     },
@@ -61,12 +68,21 @@ export async function authRoutes(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post("/auth/refresh", {
     schema: {
       tags: ["Auth"],
+      summary: "Renova o token de acesso",
+      description:
+        "Recebe um refresh token válido e retorna um novo access token.",
       body: z.object({
-        refreshToken: z.string(),
+        refreshToken: z
+          .string()
+          .describe("JWT de atualização emitido anteriormente"),
       }),
       response: {
         200: z.object({
-          accessToken: z.string(),
+          accessToken: z.string().describe("Novo JWT de acesso"),
+        }),
+        401: z.object({
+          statusCode: z.literal(401),
+          message: z.string(),
         }),
       },
     },
@@ -75,7 +91,6 @@ export async function authRoutes(app: FastifyInstance) {
 
       try {
         const payload = verifyRefreshToken(refreshToken) as { sub: string };
-
         const accessToken = generateAccessToken(payload.sub);
         return reply.send({ accessToken });
       } catch {

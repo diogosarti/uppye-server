@@ -1,6 +1,7 @@
 import "dotenv/config";
 import Fastify from "fastify";
 import {
+  jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
@@ -20,9 +21,23 @@ app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 app.register(fastifySwagger, {
   openapi: {
-    info: { title: "Uppye API Documentation", version: "1.0.0" },
+    info: {
+      title: "Uppye API Documentation",
+      version: "1.0.0",
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
   },
+  transform: jsonSchemaTransform,
 });
+
 app.register(fastifySwaggerUi, {
   routePrefix: "/docs",
 });
