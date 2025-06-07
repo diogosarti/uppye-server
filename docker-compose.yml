@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: bitnami/postgresql:17.5.0
+    container_name: postgres
+    environment:
+      - POSTGRESQL_USERNAME=admin
+      - POSTGRESQL_PASSWORD=admin
+      - POSTGRESQL_DATABASE=uppye
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/bitnami/postgresql
+
+volumes:
+  postgres_data:
