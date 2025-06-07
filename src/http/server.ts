@@ -8,11 +8,13 @@ import { routes } from "./routes";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import caslPlugin from "@/plugins/casl";
+import errorHandler from "@/plugins/error-handler";
 
 const app = Fastify({
   logger: true,
 });
 app.register(caslPlugin);
+app.register(errorHandler);
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);

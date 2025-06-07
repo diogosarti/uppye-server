@@ -8,6 +8,7 @@ import { getLoggedUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { institutionUsers, teachersInstitutions } from "@/lib/schema";
 import { eq } from "drizzle-orm";
+import { ForbiddenError, UnauthorizedError } from "@/lib/errors";
 
 // função utilitária de cota de professor (implante como quiser)
 async function checkTeacherQuota(userId: string): Promise<boolean> {
@@ -24,7 +25,7 @@ export function authorize(action: Actions, subject: Subjects) {
     const user = await getLoggedUser(request);
 
     if (!user) {
-      return reply.code(401).send({ message: "Unauthorized" });
+      throw new UnauthorizedError("Usuário não autenticado");
     }
 
     let institutionRole: "admin" | "secretary" | "finance" | undefined;
@@ -58,7 +59,7 @@ export function authorize(action: Actions, subject: Subjects) {
     });
 
     if (!ability.can(action, subject)) {
-      return reply.code(403).send({ message: "Forbidden" });
+      throw new ForbiddenError("Acesso negado");
     }
 
     request.ability = ability;
