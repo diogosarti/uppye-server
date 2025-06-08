@@ -11,10 +11,14 @@ import fastifySwaggerUi from "@fastify/swagger-ui";
 import caslPlugin from "@/plugins/casl";
 import errorHandler from "@/plugins/error-handler";
 import { cleanExpiredTokens } from "@/plugins/clean-expired-tokens";
+import { authPlugin } from "@/plugins/auth";
 
 const app = Fastify({
   logger: true,
 });
+
+app.register(authPlugin);
+
 app.register(caslPlugin);
 app.register(errorHandler);
 app.register(cleanExpiredTokens);

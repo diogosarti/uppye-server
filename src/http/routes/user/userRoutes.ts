@@ -1,5 +1,4 @@
 import { authorize } from "@/http/middlewares/authorize";
-import { getLoggedUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { UnauthorizedError } from "@/lib/errors";
 import { users } from "@/lib/schema";
@@ -63,7 +62,7 @@ export async function userRoutes(app: FastifyInstance) {
       },
     },
     handler: async (request, reply) => {
-      const user = await getLoggedUser(request);
+      const user = request.user;
       if (!user) {
         throw new UnauthorizedError("Usuário não autenticado");
       }

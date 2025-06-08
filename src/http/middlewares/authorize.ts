@@ -4,7 +4,6 @@ import {
   type Actions,
   type Subjects,
 } from "@/lib/casl/abilities";
-import { getLoggedUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { institutionUsers, teachersInstitutions } from "@/lib/schema";
 import { eq } from "drizzle-orm";
@@ -22,7 +21,7 @@ async function checkTeacherQuota(userId: string): Promise<boolean> {
 
 export function authorize(action: Actions, subject: Subjects) {
   return async (request: FastifyRequest, reply: FastifyReply) => {
-    const user = await getLoggedUser(request);
+    const user = request.user;
 
     if (!user) {
       throw new UnauthorizedError("Usuário não autenticado");
