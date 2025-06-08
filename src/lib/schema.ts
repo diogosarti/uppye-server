@@ -29,6 +29,21 @@ export const users = pgTable("users", {
     .$onUpdateFn(() => new Date()),
 });
 
+export const userTokens = pgTable("user_tokens", {
+  id: varchar("id", { length: 24 })
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  userId: varchar("user_id", { length: 24 })
+    .notNull()
+    .references(() => users.id),
+  sessionId: varchar("session_id", { length: 24 }).notNull(),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
 // ACCOUNTS
 export const accounts = pgTable("accounts", {
   id: varchar("id", { length: 24 })
